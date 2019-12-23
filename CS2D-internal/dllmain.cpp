@@ -49,11 +49,12 @@ DWORD WINAPI HackThread(HMODULE hModule)
 			bool isOurPlayerFound = false;
 			MODULEINFO moduleInfo;
 			GetModuleInformation(GetCurrentProcess(), GetModuleHandle(L"cs2d.exe"), &moduleInfo, sizeof(moduleInfo));
+			
 			std::cout << "module -> SizeOfImage: " << moduleInfo.SizeOfImage;
 			uintptr_t currentPosition = moduleBase;
 			int fullModuleSize = moduleBase + moduleInfo.SizeOfImage - 4;
 			std::cout << "Last searchable location " << fullModuleSize << std::endl;
-			while (currentPosition < fullModuleSize) 
+			while (currentPosition < fullModuleSize)   
 			{
 				
 					//std::cout << "currentPosition " << std::hex << currentPosition << " ";
