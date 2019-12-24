@@ -2,8 +2,38 @@
 #include "Player.h"
 #include <math.h>
 #include <iostream>
+#include <iomanip>
 
 const float PI = 3.14159265358;
+
+Player* Aimbot::getClosestEnemy(std::vector<Player*> playersPtrs, Player* localPlayerPtr ) {
+	float closestDitance = 10000000;
+	Player *closestPlayer = 0;
+
+	for (auto possibleEnemy = playersPtrs.begin(); possibleEnemy != playersPtrs.end(); ++possibleEnemy) {
+
+		// here we should instantiate the player class exported from RECLASS whenever we have one
+
+		float thisEnemyDistance = (float)sqrt(
+        pow(double((*possibleEnemy)->xCoord - localPlayerPtr->xCoord), 2.0) +
+        pow(double((*possibleEnemy)->yCoord - localPlayerPtr->yCoord), 2.0));
+
+		if ((*possibleEnemy)->xCoord > 0 && (*possibleEnemy)->yCoord > 0 && (*possibleEnemy)->team != localPlayerPtr->team && thisEnemyDistance < closestDitance && !(*possibleEnemy)->isDead && !localPlayerPtr->isDead)
+		{
+			closestDitance = thisEnemyDistance;
+			closestPlayer = (*possibleEnemy);
+		}
+
+	};
+
+	// std::cout << "closestDitance: " << std::fixed << std::setprecision(3) << closestDitance << std::endl;
+	// std::cout << "closestPlayer Position X :" << closestPlayer->xCoord << "\n";
+	// std::cout << "closestPlayer Position Y :" << closestPlayer->yCoord << "\n";
+	
+	return closestPlayer;
+}
+
+
 const void Aimbot::aimAt(Player* localPlayerPtr, Player* enemyPtr) 
 {
 	mem::Nop(nopLoc, bytesToNopSize);

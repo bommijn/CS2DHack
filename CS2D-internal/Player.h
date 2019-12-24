@@ -4,7 +4,7 @@
 class Player
 {
 public:
-	int32_t whatever; 
+	int32_t placeholderForVtable; 
 	int32_t N00000CCF; //0x0004
 	int32_t N0000099F; //0x0008
 	char pad_000C[176]; //0x000C
@@ -23,7 +23,9 @@ public:
 	float viewAngleY; //0x01E0
 	int32_t something_with_X_pos_on_map; //0x01E4
 	int32_t something_with_y_pos_on_map; //0x01E8
-	char pad_01EC[96]; //0x01EC
+	char pad_01EC[52]; //0x01EC
+	bool isDead; //0x022c // this changes from 0 to random values when player dies. Good enough for now
+	char pad_021D[43]; //0x021D
 	class currentGun *N00000D66; //0x024C
 	char pad_0250[120]; //0x0250
 	int32_t Xcoord_mouse_on_screen; //0x02C8

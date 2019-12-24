@@ -1,6 +1,7 @@
 #pragma once
 #include "mem.h"
 #include "Player.h"
+
 class Aimbot
 {
 private:
@@ -11,6 +12,6 @@ private:
 
 public:
 	const void aimAt(Player* localPlayerPtr, Player* enemyPtr);
-
+	Player* getClosestEnemy(std::vector<Player*> playersPtrs, Player* localPlayerPtr );
 };
 

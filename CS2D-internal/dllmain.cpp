@@ -104,7 +104,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 		std::vector<uintptr_t> possiblePlayerBases = getPossiblePlayersPointers(moduleBase);
 
 		realPlayerBases = filterRealPlayerBases(possiblePlayerBases, (uintptr_t)(*((uintptr_t*)(localPlayerPtr))));
-
+		std::vector<Player*> playersPtrs;
 		for (auto playerBasePtr = realPlayerBases.begin(); playerBasePtr != realPlayerBases.end(); ++playerBasePtr) {
 			// here we should instantiate the player class exported from RECLASS whenever we have one
 
@@ -114,12 +114,16 @@ DWORD WINAPI HackThread(HMODULE hModule)
 			std::cout << "Player Position X :" << player->xCoord << "\n";
 			std::cout << "Player Position Y :" << player->yCoord << "\n";
 			std::cout << "---------------------- \n";
+			playersPtrs.push_back(player);
 		};
 
-		Player* enemy = (Player*)(realPlayerBases.back());
 
-		aimbot.aimAt(localPlayerPtr, enemy );
-		
+		Player* enemy = aimbot.getClosestEnemy(playersPtrs, localPlayerPtr);
+		if (enemy)
+		{
+			aimbot.aimAt(localPlayerPtr, enemy);
+		}
+			
 		Sleep(30);
 	}
 
