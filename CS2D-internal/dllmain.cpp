@@ -3,9 +3,169 @@
 #include <iomanip>
 #include <windows.h>
 #include <psapi.h>
+#include <algorithm>
+#include "Player.h"
+#include "PlayerLinkedList.h"
 #include "mem.h"
+#include "Aimbot.h"
 
 
+uintptr_t localPlayerLinkedListOffset = 0x0486330;
+Aimbot aimbot;
+std::vector<uintptr_t> realPlayerBases;
+std::vector<uintptr_t> localPlayerLinkedListPointers = { 0x8, 0xc, 0x0 };
+
+std::vector<uintptr_t> filterRealPlayerBases(std::vector<uintptr_t> possiblePlayerBases, uintptr_t knownLocalPlayerVtable) {
+
+	std::cout << "AEWS knownLocalPlayerVtable :" << std::hex << knownLocalPlayerVtable << "\n";
+
+
+	auto it = std::remove_if(possiblePlayerBases.begin(), possiblePlayerBases.end(), [&knownLocalPlayerVtable](uintptr_t playerBase) {
+		return *(uintptr_t*)playerBase != knownLocalPlayerVtable;
+		});
+	possiblePlayerBases.erase(it, possiblePlayerBases.end());
+
+	return possiblePlayerBases;
+}
+
+std::vector<uintptr_t> getPossiblePlayersPointers(uintptr_t moduleBase) {
+	uintptr_t address = mem::FindDMAAddy(moduleBase + localPlayerLinkedListOffset, localPlayerLinkedListPointers);
+	// std::cout << "linked list address :" << std::hex << address << "\n";
+
+	PlayerLinkedList* playerLinkedList = (PlayerLinkedList*)(address);
+	// std::cout << "linked list playerBasePointer :" << std::hex << playerLinkedList->playerBasePointer << "\n";
+	// std::cout << "linked list nextOnList :" << std::hex << playerLinkedList->nextOnList << "\n";
+	// std::cout << "linked list previousOnList :" << std::hex << playerLinkedList->previousOnList << "\n";
+
+	std::vector<PlayerLinkedList> linkedListMembers = { *playerLinkedList };
+	std::vector<uintptr_t> possiblePlayerBases = { playerLinkedList->playerBasePointer };
+
+	for (int i = 0; i < 1000; ++i)
+	{
+
+		PlayerLinkedList* newLinkedList = (PlayerLinkedList*)(linkedListMembers.back().nextOnList);
+		// std::cout << "newLinkedList playerBasePointer :" << std::hex << newLinkedList->playerBasePointer << "\n";
+		// std::cout << "newLinkedList nextOnList :" << std::hex << newLinkedList->nextOnList << "\n";
+		// std::cout << "newLinkedList previousOnList :" << std::hex << newLinkedList->previousOnList << "\n";
+
+
+		if (std::find(possiblePlayerBases.begin(), possiblePlayerBases.end(), newLinkedList->playerBasePointer) != possiblePlayerBases.end()) {
+			break;
+		}
+		else {
+			possiblePlayerBases.push_back(newLinkedList->playerBasePointer);
+			linkedListMembers.push_back(*newLinkedList);
+		}
+
+	}
+
+	return possiblePlayerBases;
+}
+
+DWORD WINAPI HackThread(HMODULE hModule)
+{
+	//Create Console
+	AllocConsole();
+	FILE* f;
+	freopen_s(&f, "CONOUT$", "w", stdout);
+
+
+	uintptr_t moduleBase = (uintptr_t)GetModuleHandle(L"cs2d.exe");		
+	Player* localPlayerPtr = (Player*)*(uintptr_t*)(moduleBase + 0x0496E0C);
+
+
+	while (true)
+	{
+
+		// std::cout << "localPlayerPtr :" << std::hex << *localPlayerPtr << "\n";
+
+		if (GetAsyncKeyState(VK_END) & 1)
+		{
+			break;
+		}
+
+		if (GetAsyncKeyState(VK_NUMPAD2) & 1)
+		{
+			std::vector<uintptr_t> possiblePlayerBases = getPossiblePlayersPointers(moduleBase);
+
+			realPlayerBases = filterRealPlayerBases(possiblePlayerBases, (uintptr_t)(*((uintptr_t*)(localPlayerPtr))));
+
+			for (auto playerBasePtr = realPlayerBases.begin(); playerBasePtr != realPlayerBases.end(); ++playerBasePtr) {
+				// here we should instantiate the player class exported from RECLASS whenever we have one
+
+				Player* player = (Player*)(*playerBasePtr);
+				std::cout << (uintptr_t)player << std::endl;
+				std::cout << "Player Base :" << (uintptr_t)(player) << "\n";
+				std::cout << "Player Position X :" << player->xCoord << "\n";
+				std::cout << "Player Position Y :" << player->yCoord << "\n";
+				std::cout << "---------------------- \n";
+			};
+		}
+
+		if (GetAsyncKeyState(VK_NUMPAD3) & 1)
+		{
+			std::cout << "localPlayerPtr base value:" << std::hex << *(uintptr_t*)localPlayerPtr << "\n";
+			// float shootDirection = *(float*)((*localPlayerPtr)+0x1DC );
+
+			std::cout << "Direction in which the bullet will fly = " << std::fixed << std::setprecision(3) << localPlayerPtr->viewAngleX << std::endl;
+		}
+
+		if (GetAsyncKeyState(VK_NUMPAD4) & 1)
+		{
+			Player* player = (Player*)(realPlayerBases.back());
+
+			aimbot.aimAt(localPlayerPtr->xCoord, localPlayerPtr->yCoord, player->xCoord, player->yCoord );
+		}
+
+		Sleep(20);
+	}
+
+	fclose(f);
+	FreeConsole();
+	FreeLibraryAndExitThread(hModule, 0);
+	return 0;
+}
+
+BOOL APIENTRY DllMain(HMODULE hModule,
+	DWORD  ul_reason_for_call,
+	LPVOID lpReserved
+)
+{
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+		CloseHandle(CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)HackThread, hModule, 0, nullptr));
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return TRUE;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 DWORD WINAPI HackThread(HMODULE hModule)
 {
 	//Create Console
@@ -91,6 +251,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 						std::cout << possibleFloat << "\n";
 						amountOfPlayer++;
 					}*/
+					/*
 
 				
 				
@@ -118,13 +279,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
 		
 
-		
-		
-		
-		
-
-		
-
+	
 		Sleep(20);
 	}
 
@@ -150,3 +305,4 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	}
 	return TRUE;
 }
+*/
