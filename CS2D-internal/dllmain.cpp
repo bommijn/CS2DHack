@@ -86,20 +86,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
 		if (GetAsyncKeyState(VK_NUMPAD2) & 1)
 		{
-			std::vector<uintptr_t> possiblePlayerBases = getPossiblePlayersPointers(moduleBase);
 
-			realPlayerBases = filterRealPlayerBases(possiblePlayerBases, (uintptr_t)(*((uintptr_t*)(localPlayerPtr))));
-
-			for (auto playerBasePtr = realPlayerBases.begin(); playerBasePtr != realPlayerBases.end(); ++playerBasePtr) {
-				// here we should instantiate the player class exported from RECLASS whenever we have one
-
-				Player* player = (Player*)(*playerBasePtr);
-				std::cout << (uintptr_t)player << std::endl;
-				std::cout << "Player Base :" << (uintptr_t)(player) << "\n";
-				std::cout << "Player Position X :" << player->xCoord << "\n";
-				std::cout << "Player Position Y :" << player->yCoord << "\n";
-				std::cout << "---------------------- \n";
-			};
 		}
 
 		if (GetAsyncKeyState(VK_NUMPAD3) & 1)
@@ -112,12 +99,28 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
 		if (GetAsyncKeyState(VK_NUMPAD4) & 1)
 		{
-			Player* player = (Player*)(realPlayerBases.back());
-
-			aimbot.aimAt(localPlayerPtr->xCoord, localPlayerPtr->yCoord, player->xCoord, player->yCoord );
 		}
 
-		Sleep(20);
+		std::vector<uintptr_t> possiblePlayerBases = getPossiblePlayersPointers(moduleBase);
+
+		realPlayerBases = filterRealPlayerBases(possiblePlayerBases, (uintptr_t)(*((uintptr_t*)(localPlayerPtr))));
+
+		for (auto playerBasePtr = realPlayerBases.begin(); playerBasePtr != realPlayerBases.end(); ++playerBasePtr) {
+			// here we should instantiate the player class exported from RECLASS whenever we have one
+
+			Player* player = (Player*)(*playerBasePtr);
+			std::cout << (uintptr_t)player << std::endl;
+			std::cout << "Player Base :" << (uintptr_t)(player) << "\n";
+			std::cout << "Player Position X :" << player->xCoord << "\n";
+			std::cout << "Player Position Y :" << player->yCoord << "\n";
+			std::cout << "---------------------- \n";
+		};
+
+		Player* enemy = (Player*)(realPlayerBases.back());
+
+		aimbot.aimAt(localPlayerPtr, enemy );
+		
+		Sleep(30);
 	}
 
 	fclose(f);

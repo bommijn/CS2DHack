@@ -1,4 +1,4 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "mem.h"
 
 //https://guidedhacking.com/threads/how-to-hack-any-game-first-internal-hack-dll-tutorial.12142/
@@ -37,7 +37,7 @@ void mem::NopEx(BYTE* dst, unsigned int size, HANDLE hProcess)
 	delete[] nopArray;
 }
 
-uintptr_t mem::FindDMAAddy(uintptr_t ptr, std::vector<unsigned int> offsets)
+uintptr_t mem::FindDMAAddy(uintptr_t ptr, std::vector<uintptr_t> offsets)
 {
 	uintptr_t addr = ptr;
 	for (unsigned int i = 0; i < offsets.size(); ++i)

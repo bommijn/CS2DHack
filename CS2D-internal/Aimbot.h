@@ -10,7 +10,7 @@ private:
 
 
 public:
-	const void aimAt(float ourX, float ourY, float enemyX, float enemyY);
+	const void aimAt(Player* localPlayerPtr, Player* enemyPtr);
 
 };
 
