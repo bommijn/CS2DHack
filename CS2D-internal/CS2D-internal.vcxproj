@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Aimbot.h" />
+    <ClInclude Include="Bodyguard.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="mem.h" />
     <ClInclude Include="pch.h" />
@@ -160,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Aimbot.cpp" />
+    <ClCompile Include="Bodyguard.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="mem.cpp" />
     <ClCompile Include="pch.cpp">
