@@ -10,8 +10,8 @@ public:
 	Player* followingPlayerPtr;
 	float lastFollowingPlayerXCoord;
 	float lastFollowingPlayerYCoord;
-	
-	void run(std::vector<Player*> playersPtrs, Player* localPlayerPtr );
+
+	void run(HWND topWindow, std::vector<Player*> playersPtrs, Player* localPlayerPtr );
 private:
 	void pickTeammate(std::vector<Player*> playersPtrs);
 };

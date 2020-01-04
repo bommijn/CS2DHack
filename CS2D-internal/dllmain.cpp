@@ -64,12 +64,6 @@ std::vector<uintptr_t> getPossiblePlayersPointers(uintptr_t moduleBase) {
 	return possiblePlayerBases;
 }
 
-void SendKeyInput(HWND &wHANDLE, WPARAM key)
-{
-	PostMessage(wHANDLE, WM_KEYDOWN, key, 0);
-	Sleep(50);
-	PostMessage(wHANDLE, WM_KEYUP, key, 0);
-}
 
 HWND FindTopWindow(DWORD pid)
 {
@@ -112,11 +106,11 @@ DWORD WINAPI HackThread(HMODULE hModule)
 	Player* localPlayerPtr = (Player*)*(uintptr_t*)(moduleBase + 0x0496E0C);
 	
 
+
 	while (true)
 	{
 
 		HWND topWindow = FindTopWindow(GetCurrentProcessId());
-		SendKeyInput(topWindow, 0x57);
 
 		// std::cout << "localPlayerPtr :" << std::hex << *localPlayerPtr << "\n";
 
@@ -158,13 +152,13 @@ DWORD WINAPI HackThread(HMODULE hModule)
 			playersPtrs.push_back(player);
 		};
 
-		bodyguard.run(playersPtrs, localPlayerPtr);
+		bodyguard.run(topWindow, playersPtrs, localPlayerPtr);
 
-		// Player* enemy = aimbot.getClosestEnemy(playersPtrs, localPlayerPtr);
-		// if (enemy)
-		// {
-		// 	aimbot.aimAt(localPlayerPtr, enemy);
-		// }
+		Player* enemy = aimbot.getClosestEnemy(playersPtrs, localPlayerPtr);
+		if (enemy)
+		{
+			aimbot.aimAt(localPlayerPtr, enemy);
+		}
 			
 		Sleep(30);
 	}
