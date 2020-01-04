@@ -99,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;CS2DINTERNAL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -151,19 +151,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Desktop\Internal\mem.h" />
-    <ClInclude Include="..\..\..\..\Desktop\Internal\proc.h" />
     <ClInclude Include="Aimbot.h" />
+    <ClInclude Include="Bodyguard.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="mem.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerLinkedList.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Desktop\Internal\mem.cpp" />
-    <ClCompile Include="..\..\..\..\Desktop\Internal\proc.cpp" />
     <ClCompile Include="Aimbot.cpp" />
+    <ClCompile Include="Bodyguard.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="mem.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
