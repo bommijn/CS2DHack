@@ -12,7 +12,8 @@ public:
 	float lastFollowingPlayerYCoord;
 
 	void run(HWND topWindow, std::vector<Player*> playersPtrs, Player* localPlayerPtr );
+	void pickTeammateIfNeeded(std::vector<Player*> playersPtrs);
+
 private:
-	void pickTeammate(std::vector<Player*> playersPtrs);
 };
 

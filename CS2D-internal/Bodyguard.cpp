@@ -25,10 +25,8 @@ void releaseKey(HWND &wHANDLE, WPARAM key)
 void Bodyguard::run(HWND topWindow, std::vector<Player*> playersPtrs, Player* localPlayerPtr ) {
 	ourPlayer = localPlayerPtr;
 	std::cout << "reunning bodyguard!" << followingPlayerPtr << "\n";
-	if (followingPlayerPtr == NULL || followingPlayerPtr->placeholderForVtable != ourPlayer->placeholderForVtable || followingPlayerPtr->team != ourPlayer->team)
-	{
-		pickTeammate(playersPtrs);
-	};
+	
+
 	if (followingPlayerPtr != NULL && followingPlayerPtr->placeholderForVtable == ourPlayer->placeholderForVtable )
 	{
 		std::cout << "Picked player: " << followingPlayerPtr << "\n";
@@ -83,13 +81,18 @@ void Bodyguard::run(HWND topWindow, std::vector<Player*> playersPtrs, Player* lo
 }
 
 
-void Bodyguard::pickTeammate(std::vector<Player*> playersPtrs) {
-	for (auto playerIt = playersPtrs.begin(); playerIt != playersPtrs.end(); ++playerIt) {
+void Bodyguard::pickTeammateIfNeeded(std::vector<Player*> playersPtrs) {
+	if (followingPlayerPtr == NULL || followingPlayerPtr->placeholderForVtable != ourPlayer->placeholderForVtable || followingPlayerPtr->team != ourPlayer->team)
+	{
+		for (auto playerIt = playersPtrs.begin(); playerIt != playersPtrs.end(); ++playerIt) {
 
-		if ((*playerIt)->team == ourPlayer->team && (*playerIt) != ourPlayer && !(*playerIt)->isDead )
-		{
-			followingPlayerPtr = *playerIt;
-		}
+			if ((*playerIt)->team == ourPlayer->team && (*playerIt) != ourPlayer && !(*playerIt)->isDead )
+			{
+				followingPlayerPtr = *playerIt;
+			}
 	};
+
+	};
+
  
 };

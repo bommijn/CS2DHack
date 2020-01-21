@@ -9,17 +9,18 @@
 #include "mem.h"
 #include "Aimbot.h"
 #include "Bodyguard.h"
-
+#include <cwchar>
 
 uintptr_t localPlayerLinkedListOffset = 0x0486330;
 Aimbot aimbot;
 Bodyguard bodyguard;
 std::vector<uintptr_t> realPlayerBases;
 std::vector<uintptr_t> localPlayerLinkedListPointers = { 0x8, 0xc, 0x0 };
+std::vector<uintptr_t> timeTotalRoundMinutesOffsets = { 0x1c };
 
 std::vector<uintptr_t> filterRealPlayerBases(std::vector<uintptr_t> possiblePlayerBases, uintptr_t knownLocalPlayerVtable) {
 
-	std::cout << "AEWS knownLocalPlayerVtable :" << std::hex << knownLocalPlayerVtable << "\n";
+	// std::cout << "AEWS knownLocalPlayerVtable :" << std::hex << knownLocalPlayerVtable << "\n";
 
 
 	auto it = std::remove_if(possiblePlayerBases.begin(), possiblePlayerBases.end(), [&knownLocalPlayerVtable](uintptr_t playerBase) {
@@ -105,12 +106,32 @@ DWORD WINAPI HackThread(HMODULE hModule)
 	uintptr_t moduleBase = (uintptr_t)GetModuleHandle(L"cs2d.exe");		
 	Player* localPlayerPtr = (Player*)*(uintptr_t*)(moduleBase + 0x0496E0C);
 	
+	uintptr_t *timeMinutesLeftPtr = (uintptr_t*)(moduleBase + 0x496F18); 
+	uintptr_t *timeSecondsLeftPtr = (uintptr_t*)(moduleBase + 0x496F1C); 
 
 
+	uintptr_t timeTotalRoundMinutesAddress = mem::FindDMAAddy(moduleBase + 0x497444, timeTotalRoundMinutesOffsets);
+	uintptr_t *timeTotalRoundMinutesPtr = (uintptr_t*)timeTotalRoundMinutesAddress;
+	bool isBegginingOfRound = false;
+
+	unsigned char arrayOfBytes[] = {0xA0, 0x4C, 0x7C, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x6F, 0x00, 0x70, 0x00};
+
+	wchar_t myarray[51] = L"op"; 
 	while (true)
 	{
+		std::cout << &arrayOfBytes << "\n";
+		std::cout << "DASHJKdHJKdhSAJKDHjska -- - -- - - - - - \n";
+		std::cout << &myarray << "\n";
+		std::cout << std::wcslen((wchar_t*)&myarray) << " Alalo DASHJKdHJKdhSAJKDHjska -- - -- - - - - - \n";
+		
 
+		 
 		HWND topWindow = FindTopWindow(GetCurrentProcessId());
+
+		
+		// std::cout << "\n *timeTotalRoundMinutesPtr: " << *timeTotalRoundMinutesPtr <<  '\n';
+		// std::cout << "\n *timeMinutesLeftPtr: " << *timeMinutesLeftPtr <<  '\n';
+		// std::cout << "\n *timeSecondsLeftPtr: " << *timeSecondsLeftPtr <<  '\n';
 
 		// std::cout << "localPlayerPtr :" << std::hex << *localPlayerPtr << "\n";
 
@@ -121,12 +142,31 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
 		if (GetAsyncKeyState(VK_NUMPAD2) & 1)
 		{
+			// SendChatMessageToAll = (_SendChatMessageToAll) (moduleBase + 0x2CA805);
+			unsigned int arrayOfBytesPtr = (unsigned int)&arrayOfBytes;
+			unsigned int chatFuncAddress = (unsigned int)moduleBase + 0x2CA805;
 
+			__asm{
+			  mov eax, 0x1;
+			  mov edx, 0x1;
+			  mov edi, 0x22;
+			  mov esi, 0x4B;
+			  mov ebx, 0x4A;
+			  push 0x0;
+			  push 0x1;
+			  push [arrayOfBytesPtr];
+			  push 0x1;
+			  push 0x1;
+			  call chatFuncAddress; // probably_chat_function
+			  add  ESP,0x14;  
+			};
+
+			// SendChatMessageToAll(1,1,(unsigned char*)&arrayOfBytes,1,0);
 		}
 
 		if (GetAsyncKeyState(VK_NUMPAD3) & 1)
 		{
-			std::cout << "localPlayerPtr base value:" << std::hex << *(uintptr_t*)localPlayerPtr << "\n";
+			// std::cout << "localPlayerPtr base value:" << std::hex << *(uintptr_t*)localPlayerPtr << "\n";
 			// float shootDirection = *(float*)((*localPlayerPtr)+0x1DC );
 
 			std::cout << "Direction in which the bullet will fly = " << std::fixed << std::setprecision(3) << localPlayerPtr->viewAngleX << std::endl;
@@ -144,13 +184,28 @@ DWORD WINAPI HackThread(HMODULE hModule)
 			// here we should instantiate the player class exported from RECLASS whenever we have one
 
 			Player* player = (Player*)(*playerBasePtr);
-			std::cout << (uintptr_t)player << std::endl;
-			std::cout << "Player Base :" << (uintptr_t)(player) << "\n";
-			std::cout << "Player Position X :" << player->xCoord << "\n";
-			std::cout << "Player Position Y :" << player->yCoord << "\n";
-			std::cout << "---------------------- \n";
+			// std::cout << (uintptr_t)player << std::endl;
+			// std::cout << "Player Base :" << (uintptr_t)(player) << "\n";
+			// std::cout << "Player Position X :" << player->xCoord << "\n";
+			// std::cout << "Player Position Y :" << player->yCoord << "\n";
+			// std::cout << "---------------------- \n";
 			playersPtrs.push_back(player);
 		};
+
+
+		if (!isBegginingOfRound && *timeMinutesLeftPtr == *timeTotalRoundMinutesPtr && *timeSecondsLeftPtr == 0)
+		{
+			isBegginingOfRound = true;
+			std::cout << "Round started! Put round started logic below here. Will run once. \n";
+			bodyguard.pickTeammateIfNeeded(playersPtrs);
+		}
+
+		if (isBegginingOfRound && !(*timeMinutesLeftPtr == *timeTotalRoundMinutesPtr && *timeSecondsLeftPtr == 0))
+		{
+			isBegginingOfRound = false;
+			std::cout << "Round ain't starting anymore :p \n";
+		}
+
 
 		bodyguard.run(topWindow, playersPtrs, localPlayerPtr);
 
