@@ -116,14 +116,15 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
 	unsigned char arrayOfBytes[] = {0xA0, 0x4C, 0x7C, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x6F, 0x00, 0x70, 0x00};
 
-	wchar_t myarray[51] = L"op"; 
+	wchar_t myarray[51] = L"any string here is fiiiine :D"; 
+	unsigned char chatString[63] = {0xA0, 0x4C, 0x7C, 0x00, 0x01, 0x00, 0x00, 0x00, (unsigned char)(std::wcslen((wchar_t*)&myarray)), 0x00, 0x00, 0x00};
+	memcpy((&chatString[0] + 0xC ), myarray, (std::wcslen((wchar_t*)&myarray)*2));
+
 	while (true)
 	{
-		std::cout << &arrayOfBytes << "\n";
-		std::cout << "DASHJKdHJKdhSAJKDHjska -- - -- - - - - - \n";
-		std::cout << &myarray << "\n";
-		std::cout << std::wcslen((wchar_t*)&myarray) << " Alalo DASHJKdHJKdhSAJKDHjska -- - -- - - - - - \n";
-		
+
+		std::cout << "&chatString: -- - -- - - - - - \n";
+		std::cout << &chatString << "\n";
 
 		 
 		HWND topWindow = FindTopWindow(GetCurrentProcessId());
@@ -143,7 +144,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 		if (GetAsyncKeyState(VK_NUMPAD2) & 1)
 		{
 			// SendChatMessageToAll = (_SendChatMessageToAll) (moduleBase + 0x2CA805);
-			unsigned int arrayOfBytesPtr = (unsigned int)&arrayOfBytes;
+			unsigned int arrayOfBytesPtr = (unsigned int)&chatString;
 			unsigned int chatFuncAddress = (unsigned int)moduleBase + 0x2CA805;
 
 			__asm{
