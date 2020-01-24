@@ -8,6 +8,7 @@
 #include "PlayerLinkedList.h"
 #include "mem.h"
 #include "Aimbot.h"
+#include "Utils.h"
 #include "Bodyguard.h"
 #include <cwchar>
 
@@ -114,19 +115,9 @@ DWORD WINAPI HackThread(HMODULE hModule)
 	uintptr_t *timeTotalRoundMinutesPtr = (uintptr_t*)timeTotalRoundMinutesAddress;
 	bool isBegginingOfRound = false;
 
-	unsigned char arrayOfBytes[] = {0xA0, 0x4C, 0x7C, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x6F, 0x00, 0x70, 0x00};
-
-	wchar_t myarray[51] = L"any string here is fiiiine :D"; 
-	unsigned char chatString[63] = {0xA0, 0x4C, 0x7C, 0x00, 0x01, 0x00, 0x00, 0x00, (unsigned char)(std::wcslen((wchar_t*)&myarray)), 0x00, 0x00, 0x00};
-	memcpy((&chatString[0] + 0xC ), myarray, (std::wcslen((wchar_t*)&myarray)*2));
-
 	while (true)
 	{
-
-		std::cout << "&chatString: -- - -- - - - - - \n";
-		std::cout << &chatString << "\n";
-
-		 
+			   		 
 		HWND topWindow = FindTopWindow(GetCurrentProcessId());
 
 		
@@ -143,26 +134,8 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
 		if (GetAsyncKeyState(VK_NUMPAD2) & 1)
 		{
-			// SendChatMessageToAll = (_SendChatMessageToAll) (moduleBase + 0x2CA805);
-			unsigned int arrayOfBytesPtr = (unsigned int)&chatString;
-			unsigned int chatFuncAddress = (unsigned int)moduleBase + 0x2CA805;
 
-			__asm{
-			  mov eax, 0x1;
-			  mov edx, 0x1;
-			  mov edi, 0x22;
-			  mov esi, 0x4B;
-			  mov ebx, 0x4A;
-			  push 0x0;
-			  push 0x1;
-			  push [arrayOfBytesPtr];
-			  push 0x1;
-			  push 0x1;
-			  call chatFuncAddress; // probably_chat_function
-			  add  ESP,0x14;  
-			};
 
-			// SendChatMessageToAll(1,1,(unsigned char*)&arrayOfBytes,1,0);
 		}
 
 		if (GetAsyncKeyState(VK_NUMPAD3) & 1)
