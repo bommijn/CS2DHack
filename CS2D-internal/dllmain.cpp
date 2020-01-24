@@ -171,7 +171,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 		{
 			isBegginingOfRound = true;
 			std::cout << "Round started! Put round started logic below here. Will run once. \n";
-			bodyguard.pickTeammateIfNeeded(playersPtrs);
+			bodyguard.pickTeammateIfNeeded(playersPtrs, moduleBase);
 		}
 
 		if (isBegginingOfRound && !(*timeMinutesLeftPtr == *timeTotalRoundMinutesPtr && *timeSecondsLeftPtr == 0))

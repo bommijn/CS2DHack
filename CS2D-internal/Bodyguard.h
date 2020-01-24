@@ -1,5 +1,6 @@
 #pragma once
 #include "Player.h"
+#include "Utils.h"
 #include <vector>
 #include <iostream>
 
@@ -12,7 +13,7 @@ public:
 	float lastFollowingPlayerYCoord;
 
 	void run(HWND topWindow, std::vector<Player*> playersPtrs, Player* localPlayerPtr );
-	void pickTeammateIfNeeded(std::vector<Player*> playersPtrs);
+	void pickTeammateIfNeeded(std::vector<Player*> playersPtrs, uintptr_t moduleBase);
 
 private:
 };

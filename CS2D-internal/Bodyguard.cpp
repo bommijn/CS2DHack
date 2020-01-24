@@ -81,7 +81,7 @@ void Bodyguard::run(HWND topWindow, std::vector<Player*> playersPtrs, Player* lo
 }
 
 
-void Bodyguard::pickTeammateIfNeeded(std::vector<Player*> playersPtrs) {
+void Bodyguard::pickTeammateIfNeeded(std::vector<Player*> playersPtrs, uintptr_t moduleBase) {
 	if (followingPlayerPtr == NULL || followingPlayerPtr->placeholderForVtable != ourPlayer->placeholderForVtable || followingPlayerPtr->team != ourPlayer->team)
 	{
 		for (auto playerIt = playersPtrs.begin(); playerIt != playersPtrs.end(); ++playerIt) {
@@ -89,6 +89,9 @@ void Bodyguard::pickTeammateIfNeeded(std::vector<Player*> playersPtrs) {
 			if ((*playerIt)->team == ourPlayer->team && (*playerIt) != ourPlayer && !(*playerIt)->isDead )
 			{
 				followingPlayerPtr = *playerIt;
+				wchar_t myarray[51] = L"any string here is fiiiine :D"; 
+				Utils::SendChatMessageToAll(moduleBase,(uintptr_t)&myarray);
+
 			}
 	};
 
