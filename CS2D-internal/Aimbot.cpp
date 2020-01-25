@@ -14,11 +14,13 @@ Player* Aimbot::getClosestEnemy(std::vector<Player*> playersPtrs, Player* localP
 
 		// here we should instantiate the player class exported from RECLASS whenever we have one
 
+		std::cout << "DSAD dJSADkJDSAkjHJ a vida aki!:" << std::dec << (*possibleEnemy)->get_health() << "\n";
+
 		float thisEnemyDistance = (float)sqrt(
         pow(double((*possibleEnemy)->xCoord - localPlayerPtr->xCoord), 2.0) +
         pow(double((*possibleEnemy)->yCoord - localPlayerPtr->yCoord), 2.0));
 
-		if ((*possibleEnemy)->xCoord > 0 && (*possibleEnemy)->yCoord > 0 && (*possibleEnemy)->team != localPlayerPtr->team && thisEnemyDistance < closestDitance && !(*possibleEnemy)->isDead && !localPlayerPtr->isDead)
+		if ((*possibleEnemy)->xCoord > 0 && (*possibleEnemy)->yCoord > 0 && (*possibleEnemy)->team != localPlayerPtr->team && thisEnemyDistance < closestDitance && !(*possibleEnemy)->is_dead() && !localPlayerPtr->is_dead())
 		{
 			closestDitance = thisEnemyDistance;
 			closestPlayer = (*possibleEnemy);

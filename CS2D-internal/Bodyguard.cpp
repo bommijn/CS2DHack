@@ -86,7 +86,7 @@ void Bodyguard::pickTeammateIfNeeded(std::vector<Player*> playersPtrs, uintptr_t
 	{
 		for (auto playerIt = playersPtrs.begin(); playerIt != playersPtrs.end(); ++playerIt) {
 
-			if ((*playerIt)->team == ourPlayer->team && (*playerIt) != ourPlayer && !(*playerIt)->isDead )
+			if ((*playerIt)->team == ourPlayer->team && (*playerIt) != ourPlayer && !(*playerIt)->is_dead() )
 			{
 				followingPlayerPtr = *playerIt;
 				wchar_t myarray[51] = L"any string here is fiiiine :D"; 
