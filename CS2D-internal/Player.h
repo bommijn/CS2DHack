@@ -3,12 +3,18 @@
 #include <cstdint>
 #include <iostream>
 
+struct nameObject {
+	char pad_000C[12];
+	wchar_t name[30];
+};
+
 class Player
 {
 public:
 	int32_t placeholderForVtable; 
 	int32_t N00000CCF; //0x0004
 	int32_t id; //0x0008
+	nameObject* ptr_to_name_struct;
 	char pad_000C[176]; //0x000C
 	int32_t used_in_aim_calc; //0x00BC
 	int32_t used_in_aim_calc_also; //0x00C0
