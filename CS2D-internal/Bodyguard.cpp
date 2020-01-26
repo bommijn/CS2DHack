@@ -89,23 +89,23 @@ void Bodyguard::pickTeammateIfNeeded(std::vector<Player*> playersPtrs, uintptr_t
 			if ((*playerIt)->team == ourPlayer->team && (*playerIt) != ourPlayer && !(*playerIt)->is_dead() )
 			{
 				followingPlayerPtr = *playerIt;
-				// std::cout << "Oh o nome aki kraih!" << std::hex << (*playerIt)->ptr_to_name_struct->name << "\n";
-				// wchar_t myarray[42] = L"Bodyguard activated! We've got your back "; 
-
-				// wchar_t *ws1 = &myarray[0], *ws2 = &(*playerIt)->ptr_to_name_struct->name[0];
-				// std::wstring s(ws1);
-				// s += std::wstring(ws2);
-				// const wchar_t* buffer = s.c_str();
-
-				// Utils::SendChatMessageToAll(moduleBase,(uintptr_t)buffer);
-
-				// Utils::SendChatMessageToAll(moduleBase,(uintptr_t)&(*playerIt)->ptr_to_name_struct->name[0]);				
-				// Utils::SendChatMessageToAll(moduleBase,(uintptr_t)&myarray);
-
+				
 			}
 	};
 
 	};
 
+	if (followingPlayerPtr != NULL)
+	{
+		// std::cout << "Oh o nome aki kraih!" << std::hex << (*playerIt)->ptr_to_name_struct->name << "\n";
+		wchar_t myarray[40] = L"Bodyguard enabled! We've got your back "; 
+
+		wchar_t *ws1 = &myarray[0], *ws2 = &(followingPlayerPtr)->ptr_to_name_struct->name[0];
+		std::wstring s(ws1);
+		s += std::wstring(ws2);
+		const wchar_t* buffer = s.c_str();
+
+		Utils::SendChatMessageToAll(moduleBase,(uintptr_t)buffer);
+	}
  
 };

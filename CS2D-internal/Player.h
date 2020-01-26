@@ -16,9 +16,9 @@ public:
 	int32_t id; //0x0008
 	nameObject* ptr_to_name_struct;
 	char pad_000C[176]; //0x000C
-	int32_t used_in_aim_calc; //0x00BC
-	int32_t used_in_aim_calc_also; //0x00C0
-	char pad_00C4[24]; //0x00C4
+	int32_t used_in_aim_calc; //0x00BC //outdated/wrong
+	int32_t used_in_aim_calc_also; //0x00C0 //outdated/wrong
+	char pad_00C4[20]; //0x00C4
 	int32_t cursordistancefromplayer; //0x00DC
 	char pad_00E0[20]; //0x00E0
 	int32_t when_not_moving_one_every_second_till_60; //0x00F4
@@ -38,6 +38,7 @@ public:
 
 	int get_health();
 	bool is_dead();
+	void test_offsets();
 	/*virtual void Function0();
 	virtual void Function1();
 	virtual void Function2();
