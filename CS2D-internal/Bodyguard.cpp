@@ -25,10 +25,8 @@ void releaseKey(HWND &wHANDLE, WPARAM key)
 void Bodyguard::run(HWND topWindow, std::vector<Player*> playersPtrs, Player* localPlayerPtr ) {
 	ourPlayer = localPlayerPtr;
 	std::cout << "reunning bodyguard!" << followingPlayerPtr << "\n";
-	if (followingPlayerPtr == NULL || followingPlayerPtr->placeholderForVtable != ourPlayer->placeholderForVtable || followingPlayerPtr->team != ourPlayer->team)
-	{
-		pickTeammate(playersPtrs);
-	};
+	
+
 	if (followingPlayerPtr != NULL && followingPlayerPtr->placeholderForVtable == ourPlayer->placeholderForVtable )
 	{
 		std::cout << "Picked player: " << followingPlayerPtr << "\n";
@@ -83,13 +81,31 @@ void Bodyguard::run(HWND topWindow, std::vector<Player*> playersPtrs, Player* lo
 }
 
 
-void Bodyguard::pickTeammate(std::vector<Player*> playersPtrs) {
-	for (auto playerIt = playersPtrs.begin(); playerIt != playersPtrs.end(); ++playerIt) {
+void Bodyguard::pickTeammateIfNeeded(std::vector<Player*> playersPtrs, uintptr_t moduleBase) {
+	if (followingPlayerPtr == NULL || followingPlayerPtr->placeholderForVtable != ourPlayer->placeholderForVtable || followingPlayerPtr->team != ourPlayer->team)
+	{
+		for (auto playerIt = playersPtrs.begin(); playerIt != playersPtrs.end(); ++playerIt) {
 
-		if ((*playerIt)->team == ourPlayer->team && (*playerIt) != ourPlayer && !(*playerIt)->isDead )
-		{
-			followingPlayerPtr = *playerIt;
-		}
+			if ((*playerIt)->team == ourPlayer->team && (*playerIt) != ourPlayer && !(*playerIt)->is_dead() )
+			{
+				followingPlayerPtr = *playerIt;
+				
+			}
 	};
+
+	};
+
+	if (followingPlayerPtr != NULL)
+	{
+		// std::cout << "Oh o nome aki kraih!" << std::hex << (*playerIt)->ptr_to_name_struct->name << "\n";
+		wchar_t myarray[40] = L"Bodyguard enabled! We've got your back "; 
+
+		wchar_t *ws1 = &myarray[0], *ws2 = &(followingPlayerPtr)->ptr_to_name_struct->name[0];
+		std::wstring s(ws1);
+		s += std::wstring(ws2);
+		const wchar_t* buffer = s.c_str();
+
+		Utils::SendChatMessageToAll(moduleBase,(uintptr_t)buffer);
+	}
  
 };
