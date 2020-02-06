@@ -200,7 +200,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
 		// std::cout << "localPlayerPtr :" << std::hex << *localPlayerPtr << "\n";
 
-		if (GetAsyncKeyState(VK_END) & 1)
+		if (GetAsyncKeyState(0x30) & 1)
 		{
 			break;
 		}
@@ -249,7 +249,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 		}
 
 
-		if (GetAsyncKeyState(VK_NUMPAD2) & 1)
+		if (GetAsyncKeyState(0x39) & 1)
 		{
 			DWORD mapObj = 0x497E4C;
 			DWORD tileCount = 0x14;
@@ -283,7 +283,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 			std::cout << "enemy Position Y :" << enemy->yCoord << "\n";
 
 			float maxLen = 340282346638528859811704183484516925440.0000000000000000f; //max distance 
-			int targetIndex = 0;
+			int targetIndex = -1;
 
 			Vector2f localPlayerPos = Vector2f(localPlayerPtr->xCoord, localPlayerPtr->yCoord);
 			Vector2f enemyPos = Vector2f(enemy->xCoord, enemy->yCoord);
@@ -311,32 +311,111 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
 			if (direction.x > 0)
 				{
-				if (direction.y > 0)
-				{
-					while (temp_pos.x <= enemyPos.x || temp_pos.y <= enemyPos.y)
+					if (direction.y > 0)
 					{
-
-						std::cout << "DENTRO DO LOOP" << std::endl;
-						temp_pos = temp_pos + direction;
-						std::cout << temp_pos.x << std::endl;
-						std::cout << temp_pos.y << std::endl;
-						float div = *(float*)(moduleBase + tilePixelSize);
-						int x = PosToCell((double)((temp_pos.x) / div));
-						int y = PosToCell((double)((temp_pos.y) / div));
-						std::cout << x << std::endl;
-						std::cout << y << std::endl;
-						int type = *(int*)(firstTileAddress + 4 * ((x * tileYCount) + y));
-						std::cout << std::hex << type << std::endl;
-						std::cout << std::hex << (firstTileAddress + 4 * ((x * tileYCount) + y)) << std::endl;
-						if (type == 1 || type == 3)
+						while (temp_pos.x <= enemyPos.x || temp_pos.y <= enemyPos.y)
 						{
-							wallFound = true;
-							break;
+							//std::cout << "dusmanin sol ustundeyim" << std::endl;
+							temp_pos = temp_pos + direction;
+							//std::cout << temp_pos.x << std::endl;
+							//std::cout << temp_pos.y << std::endl;
+							float div = *(float*)(moduleBase + tilePixelSize);
+							int x = PosToCell((double)((temp_pos.x) / div));
+							int y = PosToCell((double)((temp_pos.y) / div));
+							//std::cout << x << std::endl;
+							//std::cout << y << std::endl;
+							int type = *(int*)(firstTileAddress + 4 * ((x * tileYCount) + y));
+							//std::cout << std::hex << type << std::endl;
+							//std::cout << std::hex << (firstTileAddress + 4 * ((x * tileYCount) + y)) << std::endl;
+							if (type == 1 || type == 3)
+							{
+								wallFound = true;
+								break;
+							}
+						}
+					}
+					else
+					{
+						while (temp_pos.x < enemyPos.x || temp_pos.y > enemyPos.y)
+						{
+							//std::cout << "dusmanin sol altindayim" << std::endl;
+							temp_pos = temp_pos + direction;
+							//std::cout << temp_pos.x << std::endl;
+							//std::cout << temp_pos.y << std::endl;
+							float div = *(float*)(moduleBase + tilePixelSize);
+							int x = PosToCell((double)((temp_pos.x) / div));
+							int y = PosToCell((double)((temp_pos.y) / div));
+							//std::cout << x << std::endl;
+							//std::cout << y << std::endl;
+							int type = *(int*)(firstTileAddress + 4 * ((x * tileYCount) + y));
+							//std::cout << std::hex << type << std::endl;
+							//std::cout << std::hex << (firstTileAddress + 4 * ((x * tileYCount) + y)) << std::endl;
+							if (type == 1 || type == 3)
+							{
+								wallFound = true;
+								break;
+							}
+						}
+
+					}
+				}
+				else
+				{
+					if (direction.y > 0)
+					{
+						while (temp_pos.x >= enemyPos.x || temp_pos.y <= enemyPos.y)
+						{
+							//std::cout << "dusmanin sag ustundeyim" << std::endl;
+							temp_pos = temp_pos + direction;
+							//std::cout << temp_pos.x << std::endl;
+							//std::cout << temp_pos.y << std::endl;
+							float div = *(float*)(moduleBase + tilePixelSize);
+							int x = PosToCell((double)((temp_pos.x) / div));
+							int y = PosToCell((double)((temp_pos.y) / div));
+							//std::cout << x << std::endl;
+							//std::cout << y << std::endl;
+							int type = *(int*)(firstTileAddress + 4 * ((x * tileYCount) + y));
+							//std::cout << std::hex << type << std::endl;
+							//std::cout << std::hex << (firstTileAddress + 4 * ((x * tileYCount) + y)) << std::endl;
+							if (type == 1 || type == 3)
+							{
+								wallFound = true;
+								break;
+							}
+						}
+					}
+					else
+					{
+						while (temp_pos.x > enemyPos.x || temp_pos.y > enemyPos.y)
+						{
+							//std::cout << "dusmanin sag altindayim" << std::endl;
+							temp_pos = temp_pos + direction;
+							//std::cout << temp_pos.x << std::endl;
+							//std::cout << temp_pos.y << std::endl;
+							float div = *(float*)(moduleBase + tilePixelSize);
+							int x = PosToCell((double)((temp_pos.x) / div));
+							int y = PosToCell((double)((temp_pos.y) / div));
+							//std::cout << x << std::endl;
+							//std::cout << y << std::endl;
+							int type = *(int*)(firstTileAddress + 4 * ((x * tileYCount) + y));
+							//std::cout << std::hex << type << std::endl;
+							//std::cout << std::hex << (firstTileAddress + 4 * ((x * tileYCount) + y)) << std::endl;
+							if (type == 1 || type == 3)
+							{
+								wallFound = true;
+								break;
+							}
 						}
 					}
 				}
-			}
-   
+
+				if (len < maxLen && !wallFound)
+				{
+					maxLen = len;
+					targetIndex = 1;
+				}
+				std::cout << "HORA DA VERDADE! : " << targetIndex << "\n";
+
 
 		}
 
