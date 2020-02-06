@@ -18,6 +18,7 @@ uintptr_t Utils::SendChatMessageToAll(uintptr_t moduleBase, uintptr_t textPtr ) 
 	// std::cout << std::hex << static_cast<void*>(chatStringPtr) << "\n";
 
 	unsigned int arrayOfBytesPtr = (unsigned int)chatStringPtr;
+
 	unsigned int chatFuncAddress = (unsigned int)moduleBase + 0x2CA805;
 
 	__asm{

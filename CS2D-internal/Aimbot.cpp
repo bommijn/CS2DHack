@@ -71,7 +71,7 @@ const void Aimbot::aimAt(Player* localPlayerPtr, Player* enemyPtr)
 	}
 	std::cout << "YAW CORRECT  " << yaw << std::endl;
 
-	localPlayerPtr->viewAngleX = yaw;
+	localPlayerPtr->viewAngleOne = yaw;
 
 	return void();
 }

@@ -33,8 +33,8 @@ void Player::test_offsets() {
 	std::cout << "My pad_01C8 is at:" << std::hex << (uintptr_t)&pad_01C8 - (uintptr_t)this << std::endl;
 	std::cout << "My xCoord is at:" << std::hex << (uintptr_t)&xCoord - (uintptr_t)this << std::endl;
 	std::cout << "My yCoord is at:" << std::hex << (uintptr_t)&yCoord - (uintptr_t)this << std::endl;
-	std::cout << "My viewAngleX is at:" << std::hex << (uintptr_t)&viewAngleX - (uintptr_t)this << std::endl;
-	std::cout << "My viewAngleY is at:" << std::hex << (uintptr_t)&viewAngleY - (uintptr_t)this << std::endl;
+	std::cout << "My viewAngleOne is at:" << std::hex << (uintptr_t)&viewAngleOne - (uintptr_t)this << std::endl;
+	std::cout << "My viewAngleTwo is at:" << std::hex << (uintptr_t)&viewAngleTwo - (uintptr_t)this << std::endl;
 	std::cout << "My something_with_X_pos_on_map is at:" << std::hex << (uintptr_t)&something_with_X_pos_on_map - (uintptr_t)this << std::endl;
 	std::cout << "My something_with_y_pos_on_map is at:" << std::hex << (uintptr_t)&something_with_y_pos_on_map - (uintptr_t)this << std::endl;
 	std::cout << "My pad_01EC is at:" << std::hex << (uintptr_t)&pad_01EC - (uintptr_t)this << std::endl;

@@ -27,8 +27,8 @@ public:
 	char pad_01C8[12]; //0x01C8
 	float xCoord; //0x01D4
 	float yCoord; //0x01D8
-	float viewAngleX; //0x01DC - might be wrong
-	float viewAngleY; //0x01E0 - might be wrong
+	float viewAngleOne; //0x01DC - might be wrong
+	float viewAngleTwo; //0x01E0 - might be wrong
 	int32_t something_with_X_pos_on_map; //0x01E4 - might be wrong
 	int32_t something_with_y_pos_on_map; //0x01E8 - might be wrong
 	char pad_01EC[0x8]; 

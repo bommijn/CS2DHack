@@ -12,6 +12,77 @@
 #include "Bodyguard.h"
 #include <cwchar>
 
+struct Vector2f
+{
+	float x = 0;
+	float y = 0;
+
+	Vector2f() {
+
+	}
+	Vector2f(float x, float y)
+	{
+		this->x = x;
+		this->y = y;
+	}
+
+	Vector2f operator-(Vector2f s)
+	{
+		return Vector2f(this->x - s.x, this->y - s.y);
+	}
+
+	Vector2f operator+(Vector2f s)
+	{
+		return Vector2f(this->x + s.x, this->y + s.y);
+	}
+
+
+	Vector2f operator*(int a)
+	{
+		return Vector2f(this->x * a, this->y * a);
+	}
+
+	float Magnitude()
+	{
+		return sqrtf(pow(this->x, 2) + pow(this->y, 2));
+	}
+
+	Vector2f Normalize()
+	{
+		float mag = this->Magnitude();
+		return Vector2f(this->x / mag, this->y / mag);
+	}
+};
+
+struct Vector2i
+{
+	int x = 0;
+	int y = 0;
+	Vector2i()
+	{
+
+	}
+	Vector2i(int x, int y)
+	{
+		this->x = x;
+		this->y = y;
+	}
+
+	Vector2i operator+(Vector2f s)
+	{
+		return Vector2i((int)(this->x + s.x), (int)(this->y + s.y));
+	}
+
+	Vector2i operator+(Vector2i s)
+	{
+		return Vector2i(this->x + s.x, this->y + s.y);
+	}
+};
+
+typedef int(__cdecl* fnPosToCell)(double a1);
+fnPosToCell PosToCell;
+
+
 uintptr_t localPlayerLinkedListOffset = 0x0486330;
 Aimbot aimbot;
 Bodyguard bodyguard;
@@ -109,6 +180,8 @@ DWORD WINAPI HackThread(HMODULE hModule)
 	
 	uintptr_t *timeMinutesLeftPtr = (uintptr_t*)(moduleBase + 0x496F18); 
 	uintptr_t *timeSecondsLeftPtr = (uintptr_t*)(moduleBase + 0x496F1C); 
+	PosToCell = (fnPosToCell)(moduleBase + 0x3B5F30);
+
 
 
 	uintptr_t timeTotalRoundMinutesAddress = mem::FindDMAAddy(moduleBase + 0x497444, timeTotalRoundMinutesOffsets);
@@ -132,18 +205,13 @@ DWORD WINAPI HackThread(HMODULE hModule)
 			break;
 		}
 
-		if (GetAsyncKeyState(VK_NUMPAD2) & 1)
-		{
-
-
-		}
-
+		
 		if (GetAsyncKeyState(VK_NUMPAD3) & 1)
 		{
 			// std::cout << "localPlayerPtr base value:" << std::hex << *(uintptr_t*)localPlayerPtr << "\n";
 			// float shootDirection = *(float*)((*localPlayerPtr)+0x1DC );
 
-			std::cout << "Direction in which the bullet will fly = " << std::fixed << std::setprecision(3) << localPlayerPtr->viewAngleX << std::endl;
+			//std::cout << "Direction in which the bullet will fly = " << std::fixed << std::setprecision(3) << localPlayerPtr->viewAngleOne << std::endl;
 		}
 
 		if (GetAsyncKeyState(VK_NUMPAD4) & 1)
@@ -181,13 +249,105 @@ DWORD WINAPI HackThread(HMODULE hModule)
 		}
 
 
-		bodyguard.run(topWindow, playersPtrs, localPlayerPtr);
-
-		Player* enemy = aimbot.getClosestEnemy(playersPtrs, localPlayerPtr);
-		if (enemy)
+		if (GetAsyncKeyState(VK_NUMPAD2) & 1)
 		{
-			aimbot.aimAt(localPlayerPtr, enemy);
+			DWORD mapObj = 0x497E4C;
+			DWORD tileCount = 0x14;
+			DWORD mapYCount = 0x18;
+			DWORD first_TileType = 0x1C;
+
+			DWORD mapPtr = *(DWORD*)(moduleBase + mapObj);
+			int tileYCount = *(int*)(mapPtr + mapYCount);
+			DWORD firstTileAddress = mapPtr + first_TileType;
+			DWORD tilePixelSize = 0x4CF274;
+
+	   	      std::cout << "mapPtr: " << std::hex  << mapPtr << "\n";
+	   	      std::cout << "tileYCount: " << std::dec  << tileYCount << "\n";
+	   	      std::cout << "firstTileAddress: " << std::hex  << firstTileAddress << "\n";
+
+	   	    std::cout << "Player Position X :" << localPlayerPtr->xCoord << "\n";
+			std::cout << "Player Position Y :" << localPlayerPtr->yCoord << "\n";
+
+			Player *enemy = 0;
+
+			for (auto possibleEnemy = playersPtrs.begin(); possibleEnemy != playersPtrs.end(); ++possibleEnemy) {
+
+				if ((*possibleEnemy)->team != localPlayerPtr->team )
+				{
+					enemy = (*possibleEnemy);
+				}
+
+			};
+
+	   	    std::cout << "enemy Position X :" << enemy->xCoord << "\n";
+			std::cout << "enemy Position Y :" << enemy->yCoord << "\n";
+
+			float maxLen = 340282346638528859811704183484516925440.0000000000000000f; //max distance 
+			int targetIndex = 0;
+
+			Vector2f localPlayerPos = Vector2f(localPlayerPtr->xCoord, localPlayerPtr->yCoord);
+			Vector2f enemyPos = Vector2f(enemy->xCoord, enemy->yCoord);
+
+			Vector2f dist = localPlayerPos - enemyPos;
+			if (dist.x < 0) dist.x *= -1; if (dist.y < 0) dist.y *= -1; //abs
+
+			float len = dist.Magnitude();
+			Vector2f dist_n = enemyPos - localPlayerPos;
+
+
+	   	    std::cout << "dist X :" << dist.x << "\n";
+	   	    std::cout << "dist y :" << dist.y << "\n";
+			std::cout << "len :" << len << "\n";
+	   	    std::cout << "dist_n x:" << dist_n.x << "\n";
+	   	    std::cout << "dist_n y :" << dist_n.y << "\n";
+
+	   	    Vector2f direction = Vector2f(dist_n.x / len, dist_n.y / len);
+			direction = direction * 20;
+			Vector2i temp_pos = Vector2i((int)localPlayerPos.x, (int)localPlayerPos.y);
+			bool wallFound = false;
+
+			std::cout << "direction y :" << direction.y << "\n";
+			std::cout << "direction x :" << direction.x << "\n";
+
+			if (direction.x > 0)
+				{
+				if (direction.y > 0)
+				{
+					while (temp_pos.x <= enemyPos.x || temp_pos.y <= enemyPos.y)
+					{
+
+						std::cout << "DENTRO DO LOOP" << std::endl;
+						temp_pos = temp_pos + direction;
+						std::cout << temp_pos.x << std::endl;
+						std::cout << temp_pos.y << std::endl;
+						float div = *(float*)(moduleBase + tilePixelSize);
+						int x = PosToCell((double)((temp_pos.x) / div));
+						int y = PosToCell((double)((temp_pos.y) / div));
+						std::cout << x << std::endl;
+						std::cout << y << std::endl;
+						int type = *(int*)(firstTileAddress + 4 * ((x * tileYCount) + y));
+						std::cout << std::hex << type << std::endl;
+						std::cout << std::hex << (firstTileAddress + 4 * ((x * tileYCount) + y)) << std::endl;
+						if (type == 1 || type == 3)
+						{
+							wallFound = true;
+							break;
+						}
+					}
+				}
+			}
+   
+
 		}
+
+
+		// bodyguard.run(topWindow, playersPtrs, localPlayerPtr);
+
+		// Player* enemy = aimbot.getClosestEnemy(playersPtrs, localPlayerPtr);
+		// if (enemy)
+		// {
+		// 	aimbot.aimAt(localPlayerPtr, enemy);
+		// }
 			
 		Sleep(30);
 	}
